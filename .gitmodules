@@ -1,6 +1,8 @@
 [submodule "src/GPS/Drivers"]
 	path = src/GPS/Drivers
 	url = https://github.com/PX4/GpsDrivers.git
+	branch = master
 [submodule "libs/mavlink/include/mavlink/v2.0"]
 	path = libs/mavlink/include/mavlink/v2.0
-	url = https://github.com/mavlink/c_library_v2.git
+	url = https://github.com/jiejiezhang/c_library_v2.git
+	branch = develop
