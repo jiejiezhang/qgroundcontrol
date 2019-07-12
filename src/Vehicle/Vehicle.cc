@@ -86,6 +86,7 @@ const char* Vehicle::_temperatureFactGroupName =        "temperature";
 const char* Vehicle::_clockFactGroupName =              "clock";
 const char* Vehicle::_distanceSensorFactGroupName =     "distanceSensor";
 const char* Vehicle::_estimatorStatusFactGroupName =    "estimatorStatus";
+const char* Vehicle::_gasSensorFactGroupName =          "gasSensor";
 
 // Standard connected vehicle
 Vehicle::Vehicle(LinkInterface*             link,
@@ -215,6 +216,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _clockFactGroup(this)
     , _distanceSensorFactGroup(this)
     , _estimatorStatusFactGroup(this)
+    , _gasSensorFactGroup(this)
 {
     connect(_joystickManager, &JoystickManager::activeJoystickChanged, this, &Vehicle::_loadSettings);
     connect(qgcApp()->toolbox()->multiVehicleManager(), &MultiVehicleManager::activeVehicleAvailableChanged, this, &Vehicle::_loadSettings);
@@ -497,6 +499,7 @@ void Vehicle::_commonInit(void)
     _addFactGroup(&_clockFactGroup,             _clockFactGroupName);
     _addFactGroup(&_distanceSensorFactGroup,    _distanceSensorFactGroupName);
     _addFactGroup(&_estimatorStatusFactGroup,   _estimatorStatusFactGroupName);
+    _addFactGroup(&_gasSensorFactGroup,         _gasSensorFactGroupName);
 
     // Add firmware-specific fact groups, if provided
     QMap<QString, FactGroup*>* fwFactGroups = _firmwarePlugin->factGroups();
@@ -794,7 +797,12 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         break;
     case MAVLINK_MSG_ID_ESTIMATOR_STATUS:
         _handleEstimatorStatus(message);
+        // just for test!!!
+        _handleGasSensor(message);
         break;
+//    case MAVLINK_MSG_ID_GAS_SENSOR:
+//        _handleMessageGasSensor(message);
+//        break;
     case MAVLINK_MSG_ID_STATUSTEXT:
         _handleStatusText(message, false /* longVersion */);
         break;
@@ -1013,6 +1021,16 @@ void Vehicle::_handleEstimatorStatus(mavlink_message_t& message)
         } mavlink_estimator_status_t;
     };
 #endif
+}
+
+// just for test!!!
+void Vehicle::_handleGasSensor(mavlink_message_t& message)
+{
+//    mavlink_gas_sensor_t gasSensor;
+//    mavlink_msg_gas_sensor_decode(&message, &gasSensor);
+
+    _gasSensorFactGroup.pm25()->setRawValue(66);
+    _gasSensorFactGroup.pm10()->setRawValue(66);
 }
 
 void Vehicle::_handleDistanceSensor(mavlink_message_t& message)
@@ -4270,4 +4288,43 @@ VehicleEstimatorStatusFactGroup::VehicleEstimatorStatusFactGroup(QObject* parent
     _addFact(&_tasRatioFact,                    _tasRatioFactName);
     _addFact(&_horizPosAccuracyFact,            _horizPosAccuracyFactName);
     _addFact(&_vertPosAccuracyFact,             _vertPosAccuracyFactName);
+}
+
+const char* VehicleGasSensorFactGroup::_pm25FactName =                              "pm25";
+const char* VehicleGasSensorFactGroup::_pm10FactName =                              "pm10";
+const char* VehicleGasSensorFactGroup::_so2FactName  =                              "so2";
+const char* VehicleGasSensorFactGroup::_vocFactName =                               "voc";
+const char* VehicleGasSensorFactGroup::_no2FactName =                               "no2";
+const char* VehicleGasSensorFactGroup::_coFactName =                                "co";
+const char* VehicleGasSensorFactGroup::_nh3FactName =                               "nh3";
+const char* VehicleGasSensorFactGroup::_o3FactName =                                "o3";
+const char* VehicleGasSensorFactGroup::_gasPressureFactName =                       "gasPressure";
+const char* VehicleGasSensorFactGroup::_humidityFactName =                          "humidity";
+const char* VehicleGasSensorFactGroup::_gasTemperatureFactName =                    "gasTemperature";
+
+VehicleGasSensorFactGroup::VehicleGasSensorFactGroup(QObject* parent)
+    : FactGroup                         (500, ":/json/Vehicle/GasSensorFactGroup.json", parent)
+    , _pm25Fact                         (0, _pm25FactName,                          FactMetaData::valueTypeUint64)
+    , _pm10Fact                         (0, _pm10FactName,                          FactMetaData::valueTypeUint64)
+    , _so2Fact                          (0, _so2FactName,                           FactMetaData::valueTypeUint16)
+    , _vocFact                          (0, _vocFactName,                           FactMetaData::valueTypeUint16)
+    , _no2Fact                          (0, _no2FactName,                           FactMetaData::valueTypeUint16)
+    , _coFact                           (0, _coFactName,                            FactMetaData::valueTypeUint32)
+    , _nh3Fact                          (0, _nh3FactName,                           FactMetaData::valueTypeUint16)
+    , _o3Fact                           (0, _o3FactName,                            FactMetaData::valueTypeUint16)
+    , _gasPressureFact                  (0, _gasPressureFactName,                   FactMetaData::valueTypeUint64)
+    , _humidityFact                     (0, _humidityFactName,                      FactMetaData::valueTypeUint8)
+    , _gasTemperatureFact               (0, _gasTemperatureFactName,                FactMetaData::valueTypeUint16)
+{
+    _addFact(&_pm25Fact,                        _pm25FactName);
+    _addFact(&_pm10Fact,                        _pm10FactName);
+    _addFact(&_so2Fact,                         _so2FactName);
+    _addFact(&_vocFact,                         _vocFactName);
+    _addFact(&_no2Fact,                         _no2FactName);
+    _addFact(&_coFact,                          _coFactName);
+    _addFact(&_nh3Fact,                         _nh3FactName);
+    _addFact(&_o3Fact,                          _o3FactName);
+    _addFact(&_gasPressureFact,                 _gasPressureFactName);
+    _addFact(&_humidityFact,                    _humidityFactName);
+    _addFact(&_gasTemperatureFact,              _gasTemperatureFactName);
 }

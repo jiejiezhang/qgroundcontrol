@@ -1,6 +1,8 @@
 # QGroundControl Change Log
 
 Note: This file only contains high level features or important fixes.
+## 4.0.0
+* Add GAS_SENSOR_STATUS values to new gassensorstatus Vehicle FactGroup. These are now available to display in instrument panel.
 
 ## 3.6
 
