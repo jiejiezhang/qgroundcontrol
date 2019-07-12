@@ -29,7 +29,7 @@ Item {
 
     function calculateXAxis()
     {
-        if(!visible()) {
+        if(!visible) {
             return;
         }
         var xAxisTemp = stickPositionX / width
@@ -40,7 +40,7 @@ Item {
 
     function calculateYAxis()
     {
-        if(!visible()) {
+        if(!visible) {
             return;
         }
         var yAxisTemp = stickPositionY / height
