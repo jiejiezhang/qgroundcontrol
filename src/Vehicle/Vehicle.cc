@@ -706,6 +706,10 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     case MAVLINK_MSG_ID_OBSTACLE_DISTANCE:
         _handleObstacleDistance(message);
         break;
+    
+    case MAVLINK_MSG_ID_FLOWMETER:
+        _handleFlowmeter(message);
+        break;
 
     case MAVLINK_MSG_ID_SERIAL_CONTROL:
     {
@@ -3672,6 +3676,12 @@ void Vehicle::_handleObstacleDistance(const mavlink_message_t& message)
     mavlink_obstacle_distance_t o;
     mavlink_msg_obstacle_distance_decode(&message, &o);
     _objectAvoidance->update(&o);
+}
+
+void Vehicle::_handleFlowmeter(const mavlink_message_t& message)
+{
+    mavlink_flowmeter_t flowmeter;
+    mavlink_msg_flowmeter_decode(&message, &flowmeter);
 }
 
 void Vehicle::updateFlightDistance(double distance)
