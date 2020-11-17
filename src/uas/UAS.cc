@@ -200,6 +200,11 @@ void UAS::receiveMessage(mavlink_message_t message)
         }
             break;
 
+        case MAVLINK_MSG_ID_FLOWMETER:
+        {
+            mavlink_flowmeter_t flowmeter;
+            mavlink_msg_flowmeter_decode(&message, &flowmeter);
+        }
         case MAVLINK_MSG_ID_LOG_ENTRY:
         {
             mavlink_log_entry_t log;
